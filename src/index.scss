@@ -5,6 +5,15 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  li  {
+    border: 1px dotted lightblue;
+    padding: 5px;
+  }
+
+  .list-label {
+    margin-left: 5px;
+  } 
 }
 
 code {
