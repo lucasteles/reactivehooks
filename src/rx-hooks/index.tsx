@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Observable, Subject, BehaviorSubject } from 'rxjs'
-import { tap, finalize } from 'rxjs/operators';
+import { tap, finalize, map } from 'rxjs/operators';
 
 type InputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
 type InputChange = React.ChangeEvent<HTMLInputElement>
+interface RxInputProperties {
+  onChange$: Observable<InputChange>
+  onValueChanges$: Observable<string>
+}
+type RxInput = ((props: InputProps) => JSX.Element) & RxInputProperties
+
 
 const useObservable = <T extends Object>(observable: Observable<T>, initialValue: T): T => {
   const [value, setValue] = useState(initialValue)
@@ -15,12 +21,12 @@ const useObservable = <T extends Object>(observable: Observable<T>, initialValue
   return value
 }
 
-const rxInput = (type?: string): [(props: InputProps) => JSX.Element, Observable<InputChange>] => {
-  const subject = new Subject<InputChange>()
-  const handleChange = (e: InputChange) => {
-    subject.next({ ...e })
-  }
 
+const rxInput = (type?: string): RxInput => {
+
+  const changeSubject = new Subject<InputChange>()
+  const handleChange = (e: InputChange) => changeSubject.next({ ...e })
+ 
   const inputFactory = (props: InputProps) =>
     <input
       onChange={handleChange}
@@ -28,7 +34,13 @@ const rxInput = (type?: string): [(props: InputProps) => JSX.Element, Observable
       {...props}
     />
 
-  return [inputFactory, subject.asObservable()]
+  const change$ = changeSubject.asObservable()
+  const customProps: RxInputProperties = {
+    onChange$: change$,
+    onValueChanges$: change$.pipe(map(x => x.target.value)),
+  }
+
+  return Object.assign(inputFactory, customProps)
 }
 
 const rxButton = (): [(props: ButtonProps) => JSX.Element, Observable<undefined>] => {
@@ -42,6 +54,18 @@ const rxButton = (): [(props: ButtonProps) => JSX.Element, Observable<undefined>
 
   return [buttonfactory, subject.asObservable()]
 }
+
+const useRxInputValue = (rxInput: RxInput, initialValue: string): [string, (value: string) => void] =>
+  {
+    const [value, setValue] = useState(initialValue)
+
+    useEffect(() =>{
+          const subscription  = rxInput.onValueChanges$.subscribe(x => setValue(x))
+          return () => subscription.unsubscribe()
+    },[])
+
+    return [value, (newValue: string) => setValue(newValue) ]
+  }
 
 const createLoaderControl = () => {
   const subject = new BehaviorSubject(false)
@@ -66,4 +90,5 @@ export {
   rxInput,
   rxButton,
   createLoaderControl,
+  useRxInputValue,
 }

@@ -15,19 +15,19 @@ import {
   rxInput,
   rxButton,
   createLoaderControl,
+  useRxInputValue,
 } from './rx-hooks'
 
-const [SearchText, textChange$] = rxInput("text")
+const SearchText = rxInput("text")
 const [SearchButton, clickSearch$] = rxButton()
 const loader = createLoaderControl()
 
 const onButtonOrText$ =
   combineLatest(
-    textChange$.pipe(startWith({ target: { value: '' } })),
+    SearchText.onValueChanges$.pipe(startWith('')),
     clickSearch$.pipe(startWith(undefined)))
     .pipe(
       map(([text, _]) => text),
-      map(text => text.target.value),
     )
 
 
@@ -46,12 +46,15 @@ const App: React.FC = () => {
   const starWarsPeople = useObservable(typeAheadSearch$, [])
   const isLoading = useObservable(loader.status$, false)
 
+  const [value, setTextValue] = useRxInputValue(SearchText, '')
+  const clearInputOnEnter = () => setTextValue('')
+
   return (
     <div className="App">
       <header className="App-header">
         <h2> RxHooks Test </h2>
         <label htmlFor="swname">Star Wars character name</label>
-        <SearchText name="swname" />
+        <SearchText name="swname" value={value} onFocus={clearInputOnEnter} />
         <SearchButton>Search</SearchButton>
         {isLoading && <img src={lodingImg} />}
         <ul>
