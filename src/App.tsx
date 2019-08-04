@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import './App.scss'
 import lodingImg from './loading.svg'
 
@@ -16,6 +16,7 @@ import {
   rxButton,
   createLoaderControl,
   useRxInputValue,
+  useSubscribe,
 } from './rx-hooks'
 
 const SearchText = rxInput("text")
@@ -41,20 +42,32 @@ const typeAheadSearch$ =
     retry(3),
   )
 
+const isTextValid = (value: string): boolean => !!value && value.length >= 2
+
 const App: React.FC = () => {
 
   const starWarsPeople = useObservable(typeAheadSearch$, [])
   const isLoading = useObservable(loader.status$, false)
 
-  const [value, setTextValue] = useRxInputValue(SearchText, '')
-  const clearInputOnEnter = () => setTextValue('')
+  const [textValue, setTextValue] = useRxInputValue(SearchText, '')
+  useSubscribe(SearchText.onFocus$, () => setTextValue(''))
+
+  const [isValid, setValid] = useState(true)
+  useSubscribe(
+    SearchText.onBlur$,
+    e => setValid(isTextValid(e.target.value)))
 
   return (
     <div className="App">
       <header className="App-header">
         <h2> RxHooks Test </h2>
         <label htmlFor="swname">Star Wars character name</label>
-        <SearchText name="swname" value={value} onFocus={clearInputOnEnter} />
+        <SearchText
+          name="swname"
+          value={textValue}
+          className={isValid ? '' : 'error'}
+          autoComplete='false'
+        />
         <SearchButton>Search</SearchButton>
         {isLoading && <img src={lodingImg} />}
         <ul>
