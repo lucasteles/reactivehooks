@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Observable, Subject } from 'rxjs'
+import { Observable, Subject, BehaviorSubject } from 'rxjs'
+import { tap, finalize } from 'rxjs/operators';
 
 type InputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
@@ -17,7 +18,7 @@ const useObservable = <T extends Object>(observable: Observable<T>, initialValue
 const rxInput = (type?: string): [(props: InputProps) => JSX.Element, Observable<InputChange>] => {
   const subject = new Subject<InputChange>()
   const handleChange = (e: InputChange) => {
-    subject.next({...e})
+    subject.next({ ...e })
   }
 
   const inputFactory = (props: InputProps) =>
@@ -42,8 +43,27 @@ const rxButton = (): [(props: ButtonProps) => JSX.Element, Observable<undefined>
   return [buttonfactory, subject.asObservable()]
 }
 
+const createLoaderControl = () => {
+  const subject = new BehaviorSubject(false)
+  return {
+    start() {
+      return <T extends Object>(x: Observable<T>) =>
+        x.pipe(
+          finalize(() => subject.next(false)),
+          tap<T>(() => subject.next(true)),
+        )
+    },
+    stop() {
+      return <T extends Object>(x: Observable<T>) =>
+        tap<T>(() => subject.next(false))(x)
+    },
+    status$: subject.asObservable(),
+  }
+}
+
 export {
   useObservable,
   rxInput,
   rxButton,
+  createLoaderControl,
 }
