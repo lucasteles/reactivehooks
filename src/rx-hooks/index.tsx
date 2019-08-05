@@ -23,21 +23,32 @@ interface RxButtonProperties {
 type RxInput = React.FC<InputProps> & RxInputProperties
 type RxButton = React.FC<ButtonProps> & RxButtonProperties
 
-const useSubscribe = <T extends Object>(
+function useSubscribe<T>(
   observable: Observable<T>,
   next?: ((value: T) => void) | undefined,
   error?: ((error: any) => void) | undefined,
-  complete?: (() => void) | undefined): void => {
+  complete?: ((done: boolean) => void)  | undefined): void {
+
   useEffect(() => {
-    const subscription = observable.subscribe(next, error, complete)
+    const subscription = observable.subscribe(next, error, complete && (() => complete(true)))
     return () => subscription.unsubscribe()
   }, [observable, next, error, complete])
 }
 
-const useObservable = <T extends Object>(observable: Observable<T>, initialValue: T): T => {
+function useObservable<T>(observable: Observable<T>, initialValue: T): T {
   const [value, setValue] = useState(initialValue)
   useSubscribe(observable, setValue)
   return value
+}
+
+
+function useObservableWithError<T>(observable: Observable<T>, initialValue: T): [T, any, boolean] {
+  const [value, setValue] = useState(initialValue)
+  const [error, setError] = useState(undefined)
+  const [completed, setComplete] = useState(false)
+  useSubscribe(observable, setValue, setError, setComplete)
+
+  return [value, error, completed]
 }
 
 const rxInput = (type?: string): RxInput => {
@@ -111,14 +122,15 @@ const createLoaderControl = () => {
   }
 }
 
-const fetchJson = <T extends Object>(url: string | Request, init?: RequestInit) => 
-      fromFetch(url, init )
-      .pipe(
-        switchMap(x => x.json().then(x => x as T)),
-      )
+const fetchJson = <T extends Object>(url: string | Request, init?: RequestInit) =>
+  fromFetch(url, init)
+    .pipe(
+      switchMap(x => x.json().then(x => x as T)),
+    )
 
 export {
   useObservable,
+  useObservableWithError,
   useSubscribe,
   rxInput,
   rxButton,

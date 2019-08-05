@@ -31,7 +31,6 @@ const onButtonOrText$ =
       map(([text, _]) => text),
     )
 
-
 const typeAheadSearch$ =
   onButtonOrText$.pipe(
     filter(x => x.length >= 2),
@@ -39,7 +38,6 @@ const typeAheadSearch$ =
     loader.start(),
     switchMap(searchStarWarsPeople),
     loader.stop(),
-    retry(3),
   )
 
 const textValidate$ = SearchText

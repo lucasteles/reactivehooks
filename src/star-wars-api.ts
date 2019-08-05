@@ -1,6 +1,5 @@
-import { map, share, switchMap  } from 'rxjs/operators'
-import { fromFetch } from 'rxjs/fetch'
-import { fetchJson } from './rx-hooks';
+import { map, share } from 'rxjs/operators'
+import { fetchJson } from './rx-hooks'
 
 export interface StarWarsPerson {
   name: string
