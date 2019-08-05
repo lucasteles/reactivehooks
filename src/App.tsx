@@ -34,9 +34,10 @@ const onButtonOrText$ =
 const typeAheadSearch$ =
   onButtonOrText$.pipe(
     filter(x => x.length >= 2),
-    debounceTime(500),
+    debounceTime(300),
     loader.start(),
     switchMap(searchStarWarsPeople),
+    retry(3),
     loader.stop(),
   )
 

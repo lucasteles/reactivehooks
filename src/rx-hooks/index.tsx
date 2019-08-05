@@ -27,12 +27,13 @@ function useSubscribe<T>(
   observable: Observable<T>,
   next?: ((value: T) => void) | undefined,
   error?: ((error: any) => void) | undefined,
-  complete?: ((done: boolean) => void)  | undefined): void {
+  complete?: ((done: boolean) => void) | undefined): void {
 
   useEffect(() => {
     const subscription = observable.subscribe(next, error, complete && (() => complete(true)))
     return () => subscription.unsubscribe()
-  }, [observable, next, error, complete])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [observable])
 }
 
 function useObservable<T>(observable: Observable<T>, initialValue: T): T {
