@@ -1,5 +1,6 @@
-import Axios from  'axios-observable';
-import { map, share  } from 'rxjs/operators'
+import { map, share, switchMap  } from 'rxjs/operators'
+import { fromFetch } from 'rxjs/fetch'
+import { fetchJson } from './rx-hooks';
 
 export interface StarWarsPerson {
   name: string
@@ -13,11 +14,10 @@ export interface StarWarApiPeopleResult {
 const getUrl = (name: string) => `https://swapi.co/api/people/?format=json&search=${name}`
 
 const searchStarWarsPeople = (name: string) =>
-      Axios.get<StarWarApiPeopleResult>(getUrl(name))
+      fetchJson<StarWarApiPeopleResult>(getUrl(name))
       .pipe(
-        map(x => x.data),
         map(x => x.results),
         share(),
       )
 
-export { searchStarWarsPeople  }
+export { searchStarWarsPeople }

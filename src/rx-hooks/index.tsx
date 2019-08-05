@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Observable, Subject, BehaviorSubject } from 'rxjs'
-import { tap, finalize, map } from 'rxjs/operators';
+import { tap, finalize, map, switchMap } from 'rxjs/operators';
+import { fromFetch } from 'rxjs/fetch';
 
 type InputProps = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
@@ -110,6 +111,12 @@ const createLoaderControl = () => {
   }
 }
 
+const fetchJson = <T extends Object>(url: string | Request, init?: RequestInit) => 
+      fromFetch(url, init )
+      .pipe(
+        switchMap(x => x.json().then(x => x as T)),
+      )
+
 export {
   useObservable,
   useSubscribe,
@@ -117,4 +124,5 @@ export {
   rxButton,
   createLoaderControl,
   useRxInputValue,
+  fetchJson,
 }
