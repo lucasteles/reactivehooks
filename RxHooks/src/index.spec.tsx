@@ -17,7 +17,7 @@ describe('when subcribe to an observable', () => {
 
   function getHookValue<T>(hookInvoke: () => T): T {
     const wrapper = mount(<HookWrapper hook={hookInvoke} />)
-    const x = wrapper.find('HookHelper').props();
+    const x = wrapper.find('HookHelper').props()
     return x['hook']
   }
   describe('using useSubscribe', () => {

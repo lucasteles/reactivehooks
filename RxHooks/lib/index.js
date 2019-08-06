@@ -31,7 +31,7 @@ function useSubscribe(observable, next, error, complete) {
 }
 exports.useSubscribe = useSubscribe;
 function useObservable(observable, initialValue) {
-    var _a = react_1.useState(initialValue), value = _a[0], setValue = _a[1];
+    var _a = react_1.useState(initialValue /*?*/), value = _a[0], setValue = _a[1];
     useSubscribe(observable, setValue);
     return value;
 }
