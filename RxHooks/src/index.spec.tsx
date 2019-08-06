@@ -1,9 +1,9 @@
 import React from 'react'
 import './setupTests'
 
-import { of, throwError, Observable, EMPTY, from, asyncScheduler, Subject } from 'rxjs'
-import { useSubscribe, useObservable, useObservableWithError } from './'
-import { mount } from 'enzyme';
+import { of, throwError, Observable, EMPTY, Subject } from 'rxjs'
+import { useSubscribe, useObservable, useObservableWithError, rxInput, rxButton, useRxInputValue } from './'
+import { mount } from 'enzyme'
 
 describe('when subcribe to an observable', () => {
 
@@ -202,6 +202,89 @@ describe('when subcribe to an observable', () => {
   })
 
   describe('with a rxInput', () => {
+
+    it('when textbox change should trigger change observable', (done) => {
+      const Input = rxInput('text')
+      const typedText = 'hello'
+
+      Input.onChange$.subscribe((e) => {
+        expect(e.target.value).toBe(typedText)
+        done()
+      })
+
+      const wraper = mount(<Input />)
+      wraper.simulate('change', { target: { value: typedText }  })
+    })
+
+    it('when textbox change should trigger changevalue observable', (done) => {
+      const Input = rxInput('text')
+      const typedText = 'hello'
+
+      Input.onValueChanges$.subscribe((value) => {
+        expect(value).toBe(typedText)
+        done()
+      })
+
+      const wraper = mount(<Input />)
+      wraper.simulate('change', { target: { value: typedText }  })
+    })
+
+    it('when textbox get focus should trigger focus observable', (done) => {
+      const Input = rxInput('text')
+
+      Input.onFocus$.subscribe(() => done())
+
+      const wraper = mount(<Input />)
+      wraper.simulate('focus')
+    })
+
+    it('when textbox get blur should trigger blur observable', (done) => {
+      const Input = rxInput('text')
+
+      Input.onBlur$.subscribe(() => done())
+
+      const wraper = mount(<Input />)
+      wraper.simulate('blur')
+    })
+
+
+    it('when click button should trigger click observable', (done) => {
+      const Button = rxButton()
+
+      Button.onClick$.subscribe(() => done())
+
+      const wraper = mount(<Button />)
+      wraper.simulate('click')
+    })
+
+  })
+
+  describe('with a useRxInputValue', () => {
+
+    it('when textbox change should render new state', () => {
+      const Input = rxInput('text')
+      const typedText = 'hello'
+
+      const HookTest = (props) => {
+          const [value] = useRxInputValue(Input, 'initial')
+          const Helper = (props) => null
+          return <>
+            <Input />
+            <Helper value={value} />
+          </>
+      }
+
+      const wraper = mount(<HookTest />)
+      const getState = () => wraper.find('Helper').props()['value']
+
+      expect(getState()).toBe('initial')
+
+      wraper.find('input').simulate('change', { target: { value: typedText }  })
+      wraper.update()
+
+      expect(getState()).toBe('hello')
+
+    })
 
   })
 
