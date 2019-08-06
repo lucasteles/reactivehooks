@@ -1,6 +1,6 @@
 {
     "name": "reactivehooks",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "Reactive Extensions helpers for React Hooks",
     "main": "lib/index.js",
     "types": "lib/index.d.ts",
