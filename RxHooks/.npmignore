@@ -1,0 +1,8 @@
+src
+tsconfig.json
+tslint.json
+.prettierrc
+jestconfig.json
+wallaby.js
+.vscode
+junit.xml
