@@ -1,5 +1,5 @@
 import { map, share } from 'rxjs/operators'
-import { fetchJson } from './rx-hooks'
+import { fetchJson } from 'reactivehooks'
 
 export interface StarWarsPerson {
   name: string

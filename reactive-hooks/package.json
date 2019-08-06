@@ -1,5 +1,5 @@
 {
-    "name": "rxhooks",
+    "name": "reactivehooks",
     "version": "0.0.1",
     "description": "Reactive Extensions helpers for React Hooks",
     "main": "lib/index.js",
@@ -44,7 +44,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/lucasteles/rx-hooks"
+        "url": "https://github.com/lucasteles/reactivehooks"
     },
     "devDependencies": {
         "coveralls": "^3.0.3",

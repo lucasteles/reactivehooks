@@ -17,7 +17,7 @@ import {
   createLoaderControl,
   useRxInputValue,
   useSubscribe,
-} from './rx-hooks'
+} from 'reactivehooks'
 
 const SearchText = rxInput("text")
 const SearchButton = rxButton()
@@ -59,7 +59,7 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        <h2> RxHooks Test </h2>
+        <h2> ReactiveHooks Test </h2>
         <label htmlFor="swname">Star Wars character name</label>
         <SearchText
           name="swname"
