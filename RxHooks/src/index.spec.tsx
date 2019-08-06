@@ -1,12 +1,25 @@
 import React from 'react'
 import './setupTests'
-// import { useStateSpy } from './setupTests'
 
-import { of, throwError, Observable, EMPTY } from 'rxjs'
-import { useSubscribe, useObservable } from './'
-import { mount, shallow } from 'enzyme';
+import { of, throwError, Observable, EMPTY, from, asyncScheduler, Subject } from 'rxjs'
+import { useSubscribe, useObservable, useObservableWithError } from './'
+import { mount } from 'enzyme';
 
 describe('when subcribe to an observable', () => {
+
+  beforeEach(() => jest.resetAllMocks())
+
+  function HookWrapper(props) {
+    const HookHelper = (props) => null
+    const hook = props.hook()
+    return <HookHelper hook={hook} />
+  }
+
+  function getHookValue<T>(hookInvoke: () => T): T {
+    const wrapper = mount(<HookWrapper hook={hookInvoke} />)
+    const x = wrapper.find('HookHelper').props();
+    return x['hook']
+  }
   describe('using useSubscribe', () => {
 
     it('should call next callback when observable emits a value ', () => {
@@ -50,7 +63,6 @@ describe('when subcribe to an observable', () => {
 
     it('should call unsubscribe when component unmount', () => {
       const unsubscribeMock = jest.fn()
-
       const observable = EMPTY
       const subscribeMock = jest.spyOn(observable, 'subscribe')
       subscribeMock.mockImplementation(() => ({ unsubscribe: unsubscribeMock } as any))
@@ -65,22 +77,29 @@ describe('when subcribe to an observable', () => {
       expect(unsubscribeMock).toHaveBeenCalled()
 
     })
+
+    it('should subscribe and unsubscribe once', () => {
+      const unsubscribeMock = jest.fn()
+      const observable = EMPTY
+      const subscribeMock = jest.spyOn(observable, 'subscribe')
+      subscribeMock.mockImplementation(() => ({ unsubscribe: unsubscribeMock } as any))
+
+      const TestComponent: React.FC = () => {
+        useSubscribe(observable)
+        return null
+      }
+      const mounted = mount(<TestComponent />)
+      mounted.unmount()
+
+      expect(subscribeMock).toHaveBeenCalledTimes(1)
+      expect(unsubscribeMock).toHaveBeenCalledTimes(1)
+    })
+
   })
 
 
   describe('using useObservable', () => {
 
-    function HookWrapper(props) {
-      const HookHelper = (props) => null
-      const hook = props.hook ? props.hook() : undefined
-      return <HookHelper hook={hook} />
-    }
-
-    function getHookValue<T>(hookInvoke: () => T): T {
-      const wrapper = mount(<HookWrapper hook={hookInvoke} />)
-      const x = wrapper.find('HookHelper').props();
-      return x['hook'] 
-    }
 
     it('should create a state with start value', () => {
       const observable: Observable<Number> = Observable.create()
@@ -89,12 +108,100 @@ describe('when subcribe to an observable', () => {
       expect(value).toBe(0)
     })
 
-    it('should create a state with observable emmited value', () => {
+    it('should update state when observable emit value', () => {
       const observable: Observable<Number> = of(1)
       const value = getHookValue(() => useObservable(observable, 0))
 
       expect(value).toBe(1)
     })
+
+    it('should update state when observable emit more values', () => {
+      const subject = new Subject<number>()
+
+      const wrapper = mount(<HookWrapper hook={() => useObservable(subject.asObservable(), 0)} />)
+      const getValue = () => wrapper.find('HookHelper').props()['hook']
+
+      expect(getValue()).toBe(0)
+
+      const expectUpdateTo = (value: number) => {
+        subject.next(value)
+        wrapper.update()
+        expect(getValue()).toBe(value)
+      }
+
+      expectUpdateTo(1)
+      expectUpdateTo(2)
+      expectUpdateTo(3)
+    })
+
+  })
+
+  describe('using useObservableWithError', () => {
+
+    it('should create a state with start value', () => {
+      const observable: Observable<Number> = Observable.create()
+      const [value] = getHookValue(() => useObservableWithError(observable, 0))
+
+      expect(value).toBe(0)
+    })
+
+    it('should update state when observable emit value', () => {
+      const observable: Observable<Number> = of(1)
+      const [value] = getHookValue(() => useObservableWithError(observable, 0))
+
+      expect(value).toBe(1)
+    })
+
+    it('should update state when observable emit more values', () => {
+      const subject = new Subject<number>()
+
+      const wrapper = mount(<HookWrapper hook={() => useObservableWithError(subject.asObservable(), 0)} />)
+      const getValue = () => wrapper.find('HookHelper').props()['hook'][0]
+
+      expect(getValue()).toBe(0)
+
+      const expectUpdateTo = (value: number) => {
+        subject.next(value)
+        wrapper.update()
+        expect(getValue()).toBe(value)
+      }
+
+      expectUpdateTo(1)
+      expectUpdateTo(2)
+      expectUpdateTo(3)
+    })
+
+    it('error should be undefined if there is no error', () => {
+      const observable: Observable<Number> = of(1)
+      const [, error] = getHookValue(() => useObservableWithError(observable, 0))
+
+      expect(error).toBeUndefined()
+    })
+
+    it('complete should be false if it not completed', () => {
+      const observable: Observable<Number> = Observable.create()
+      const [, , completed] = getHookValue(() => useObservableWithError(observable, 0))
+
+      expect(completed).toBe(false)
+    })
+
+    it('complete should be true if it is completed', () => {
+      const observable: Observable<Number> = of(1)
+      const [, , completed] = getHookValue(() => useObservableWithError(observable, 0))
+
+      expect(completed).toBe(true)
+    })
+
+    it('error should exist if there is an error', () => {
+      const observable: Observable<Number> = throwError('error')
+      const [, error] = getHookValue(() => useObservableWithError(observable, 0))
+
+      expect(error).toBe('error')
+    })
+
+  })
+
+  describe('with a rxInput', () => {
 
   })
 
