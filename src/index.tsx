@@ -8,6 +8,7 @@ type ButtonProps = React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButton
 type InputChangeEvent = React.ChangeEvent<HTMLInputElement>
 type FocusEvent = React.FocusEvent<HTMLInputElement>
 type MouseButtonEvent = React.MouseEvent<HTMLButtonElement>
+export type HtmlInputTypes = "button" | "checkbox" | "color" | "date" | "datetime-local" | "email" | "file" | "hidden" | "image" | "month" | "number" | "password" | "radio" | "range" | "reset" | "search" | "submit" | "tel" | "text" | "time" | "url" | "week"
 
 interface RxInputProperties {
   onChange$: Observable<InputChangeEvent>
@@ -53,7 +54,7 @@ function useObservableWithError<T>(observable: Observable<T>, initialValue: T): 
   return [value, error, completed]
 }
 
-const rxInput = (type?: string): RxInput => {
+const rxInput = (type?: HtmlInputTypes): RxInput => {
 
   const changeSubject = new Subject<InputChangeEvent>()
   const handleChange = (e: InputChangeEvent) => changeSubject.next({ ...e })
@@ -134,9 +135,9 @@ export {
   useObservable,
   useObservableWithError,
   useSubscribe,
+  useRxInputValue,
   rxInput,
   rxButton,
   createLoaderControl,
-  useRxInputValue,
   fetchJson,
 }

@@ -14,7 +14,7 @@ npm i reactivehooks
 
 ## Get Started
 
-This code sample shows how to write a type ahead search using Reactive Hooks and [RxJs](https://github.com/ReactiveX/rxjs):
+The code below is a sample that shows how to write a type ahead search using Reactive Hooks and [RxJs](https://github.com/ReactiveX/rxjs):
 
 * for a more complete example check the [**sample folder**](https://github.com/lucasteles/reactivehooks/tree/master/Sample) in this repository
 
@@ -63,4 +63,120 @@ const App = () => {
 }
 ```
 
-## Documentation
+# Documentation
+
+
+## useSubscribe
+
+A hook that provides a way to just subscribe to an observable
+
+Signature:
+```ts
+ function useSubscribe<T>(
+   observable: Observable<T>, 
+   next?: ((value: T) => void), 
+   error?: ((error: any) => void), 
+   complete?: ((done: boolean) => void)
+ ): void
+```
+
+
+---
+## useObservable
+
+A hook that subscribes to an observable and returns the emited value as a state for your component
+
+Signature:
+```ts
+function useObservable<T>(
+    observable: Observable<T>, 
+    initialValue: T
+): T
+```
+---
+## useObservableWithError
+
+A hook that subscribes to an observable and returns the emited value, error ou complete  as a state for your component
+
+Signature:
+```ts
+function useObservableWithError<T>(
+    observable: Observable<T>, 
+    initialValue: T
+): [T, any, boolean]
+```
+---
+## useRxInputValue
+
+A hook that subscribes to an observable of changes of a `RxInput`, returning the value and a function to change the input value
+
+Signature:
+```ts
+function useRxInputValue(
+  rxInput: RxInput, 
+  initialValue: string
+) => [string, (value: string) => void]
+```
+---
+
+## rxInput
+
+Creates a html input of given type, the control have observable properties for control changes
+
+Signature:
+```ts
+function rxInput(type: string): RxInput
+```
+
+### Properties
+
+| Property        | Event    | Notes                                                                |
+|-----------------|----------|----------------------------------------------------------------------|
+| onChange$       | onChange |                                                                      |
+| onFocus$        | onFocus  |                                                                      |
+| onBlur$         | onBlur   |                                                                      |
+| onValueChanges$ | onChange | Emit just the value of the control without the complete event object |
+---
+
+## rxButton
+
+Creates a html button, the control have observable properties for control changes
+
+Signature:
+```ts
+function rxButton(): RxButton
+```
+
+### Properties
+
+| Property        | Event    | Notes                                                                |
+|-----------------|----------|----------------------------------------------------------------------|
+| onClick$       | onClick |                                                                      |
+
+---
+## createLoaderControl
+
+Creates a helper object with RxJs operators for start and stop a loader observable
+
+Signature:
+```ts
+function createLoaderControl(): {
+    start(): function<T>(x: Observable<T>): Observable<T>;
+    stop(): function<T>(x: Observable<T>): Observable<T>;
+    status$: Observable<boolean>
+}
+```
+
+---
+## fetchJson
+
+Is just the `fromFetch`  from `rxjs/fetch`, but auto map to `json()`
+
+Signature:
+```ts
+function fetchJson<T>(
+  url: string | Request, 
+  init?: RequestInit
+): Observable<T>
+```
+---
