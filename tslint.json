@@ -3,6 +3,6 @@
        "semicolon": [true, "never"]
    },
     "linterOptions": {
-      "exclude": ["sample/**"]
+      "exclude": ["sample/**/**", "Sample/**/**"]
     }
 }
