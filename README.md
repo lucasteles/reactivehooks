@@ -5,6 +5,8 @@
 
 Reactive Hooks provides a set of tools for work with Reactive Extensions in React using hooks
 
+** This project is in a very early stage, feel free to contribute 😉
+
 ## Installation
 
 Nothing new here, just npm install
