@@ -1,18 +1,23 @@
-# RxHooks
-[![npm version](https://badge.fury.io/js/fluentbuilder.svg)](https://badge.fury.io/js/fluentbuilder)
-[![Build Status](https://travis-ci.org/lucasteles/fluentbuilder.svg?branch=master)](https://travis-ci.org/lucasteles/fluentbuilder)
-[![Coverage Status](https://img.shields.io/coveralls/github/lucasteles/fluentbuilder/master.svg)](https://coveralls.io/github/lucasteles/fluentbuilder?branch=master)
+# Reactive Hooks
+[![npm version](https://badge.fury.io/js/reactivehooks.svg)](https://badge.fury.io/js/reactivehooks)
+[![Build Status](https://travis-ci.org/lucasteles/reactivehooks.svg?branch=master)](https://travis-ci.org/lucasteles/reactivehooks)
+[![Coverage Status](https://img.shields.io/coveralls/github/lucasteles/reactivehooks/master.svg)](https://coveralls.io/github/lucasteles/reactivehooks?branch=master)
 
-FluentBuilder provides a simple way for creating data builders for your tests, with all the beauty of a good intellisense.
-
-It's use [Faker.Js](https://github.com/marak/Faker.js/) for fake data.
+Reactive Hooks provides a set of tools for work with Reactive Extensions in React using hooks
 
 ## Installation
 
 Nothing new here, just npm install
 ```sh
-npm i --save-dev fluentbuilder
+npm i reactivehooks
 ```
 
 ## Get Started
 
+This code sample shows how to write a type ahead search using Reactive Hooks and [RxJs](https://github.com/ReactiveX/rxjs)
+
+```ts
+
+```
+
+## Documentation
