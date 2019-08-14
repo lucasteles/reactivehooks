@@ -7,6 +7,8 @@ Reactive Hooks provides a set of tools for work with Reactive Extensions in Reac
 
 ** This project is in a very early stage, feel free to contribute 😉
 
+[**Click here to check an online working SAMPLE**](https://stackblitz.com/edit/rectivehooks-sample)
+
 ## Installation
 
 Nothing new here, just npm install
@@ -18,7 +20,7 @@ npm i reactivehooks
 
 The code below is a sample that shows how to write a type ahead search using Reactive Hooks and [RxJs](https://github.com/ReactiveX/rxjs):
 
-* for a more complete example check the [**sample folder**](https://github.com/lucasteles/reactivehooks/tree/master/Sample) in this repository
+* for a more complete example check the [**sample folder**](https://github.com/lucasteles/reactivehooks/tree/master/Sample) source code in this repository or check this working [online sample](https://stackblitz.com/edit/rectivehooks-sample)
 
 ```tsx
 // api fetch that returns an observable
