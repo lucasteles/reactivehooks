@@ -100,7 +100,7 @@ function useObservable<T>(
 ---
 ## useObservableWithError
 
-A hook that subscribes to an observable and returns the emited value, error ou complete  as a state for your component
+A hook that subscribes to an observable and returns the emited value, error or complete as a state for your component
 
 Signature:
 ```ts
