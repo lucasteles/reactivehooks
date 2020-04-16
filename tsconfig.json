@@ -5,6 +5,7 @@
         "declaration": true,
         "outDir": "./lib",
         "strictNullChecks": true,
+        "strict": true,
         "jsx": "react",
         "esModuleInterop": true,
     },

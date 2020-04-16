@@ -1,25 +1,19 @@
 import React from 'react'
-import './setupTests'
 import { act } from 'react-dom/test-utils'
 import { of, throwError, Observable, EMPTY, Subject } from 'rxjs'
 import { useSubscribe, useObservable, useObservableWithError, rxInput, rxButton, useRxInputValue } from './'
-import { mount } from 'enzyme'
+import { render, fireEvent } from '@testing-library/react'
+import { renderHook } from '@testing-library/react-hooks'
 
 describe('when subcribe to an observable', () => {
 
   beforeEach(() => jest.resetAllMocks())
 
-  function HookWrapper(props) {
-    const HookHelper = (props) => null
-    const hook = props.hook()
-    return <HookHelper hook={hook} />
+  function getHookValue<T>(hook: () => T) {
+    const { result: { current: value } } = renderHook(hook)
+    return value
   }
 
-  function getHookValue<T>(hookInvoke: () => T): T {
-    const wrapper = mount(<HookWrapper hook={hookInvoke} />)
-    const x = wrapper.find('HookHelper').props()
-    return x['hook']
-  }
   describe('using useSubscribe', () => {
 
     it('should call next callback when observable emits a value ', () => {
@@ -30,7 +24,7 @@ describe('when subcribe to an observable', () => {
         return null
       }
 
-      mount(<TestComponent />)
+      render(<TestComponent />)
 
       expect(nextFn).toHaveBeenCalledWith(1)
     })
@@ -44,7 +38,7 @@ describe('when subcribe to an observable', () => {
       }
 
 
-      mount(<TestComponent />)
+      render(<TestComponent />)
 
       expect(errorFn).toHaveBeenCalledWith('error')
     })
@@ -57,7 +51,7 @@ describe('when subcribe to an observable', () => {
         return null
       }
 
-      mount(<TestComponent />)
+      render(<TestComponent />)
 
       expect(completesFn).toHaveBeenCalledWith(true)
     })
@@ -72,7 +66,7 @@ describe('when subcribe to an observable', () => {
         useSubscribe(observable)
         return null
       }
-      const mounted = mount(<TestComponent />)
+      const mounted = render(<TestComponent />)
       mounted.unmount()
 
       expect(unsubscribeMock).toHaveBeenCalled()
@@ -89,7 +83,7 @@ describe('when subcribe to an observable', () => {
         useSubscribe(observable)
         return null
       }
-      const mounted = mount(<TestComponent />)
+      const mounted = render(<TestComponent />)
       mounted.unmount()
 
       expect(subscribeMock).toHaveBeenCalledTimes(1)
@@ -101,11 +95,9 @@ describe('when subcribe to an observable', () => {
 
   describe('using useObservable', () => {
 
-
     it('should create a state with start value', () => {
       const observable: Observable<Number> = Observable.create()
       const value = getHookValue(() => useObservable(observable, 0))
-
       expect(value).toBe(0)
     })
 
@@ -119,15 +111,14 @@ describe('when subcribe to an observable', () => {
     it('should update state when observable emit more values', () => {
       const subject = new Subject<number>()
 
-      const wrapper = mount(<HookWrapper hook={() => useObservable(subject.asObservable(), 0)} />)
-      const getValue = () => wrapper.find('HookHelper').props()['hook']
+      const hook = renderHook(() => useObservable(subject.asObservable(), 0))
 
-      expect(getValue()).toBe(0)
+      expect(hook.result.current).toBe(0)
 
       const expectUpdateTo = (value: number) => {
         act(() => { subject.next(value) })
-        wrapper.update()
-        expect(getValue()).toBe(value)
+        hook.rerender()
+        expect(hook.result.current).toBe(value)
       }
 
       expectUpdateTo(1)
@@ -156,16 +147,14 @@ describe('when subcribe to an observable', () => {
     it('should update state when observable emit more values', () => {
       const subject = new Subject<number>()
 
-      const wrapper = mount(<HookWrapper hook={() => useObservableWithError(subject.asObservable(), 0)} />)
+      const hook = renderHook(() => useObservable(subject.asObservable(), 0))
 
-      const getValue = () => wrapper.find('HookHelper').props()['hook'][0]
-
-      expect(getValue()).toBe(0)
+      expect(hook.result.current).toBe(0)
 
       const expectUpdateTo = (value: number) => {
         act(() => { subject.next(value) })
-        wrapper.update()
-        expect(getValue()).toBe(value)
+        hook.rerender()
+        expect(hook.result.current).toBe(value)
       }
 
       expectUpdateTo(1)
@@ -213,9 +202,8 @@ describe('when subcribe to an observable', () => {
         expect(e.target.value).toBe(typedText)
         done()
       })
-
-      const wraper = mount(<Input />)
-      wraper.simulate('change', { target: { value: typedText } })
+      const input = render(<Input />).container.querySelector('input')
+      fireEvent.change(input, { target: { value: typedText } })
     })
 
     it('when textbox change should trigger changevalue observable', (done) => {
@@ -227,8 +215,8 @@ describe('when subcribe to an observable', () => {
         done()
       })
 
-      const wraper = mount(<Input />)
-      wraper.simulate('change', { target: { value: typedText } })
+      const input = render(<Input />).container.querySelector('input')
+      fireEvent.change(input, { target: { value: typedText } })
     })
 
     it('when textbox get focus should trigger focus observable', (done) => {
@@ -236,8 +224,8 @@ describe('when subcribe to an observable', () => {
 
       Input.onFocus$.subscribe(() => done())
 
-      const wraper = mount(<Input />)
-      wraper.simulate('focus')
+      const input = render(<Input />).container.querySelector('input')
+      fireEvent.focus(input)
     })
 
     it('when textbox get blur should trigger blur observable', (done) => {
@@ -245,8 +233,8 @@ describe('when subcribe to an observable', () => {
 
       Input.onBlur$.subscribe(() => done())
 
-      const wraper = mount(<Input />)
-      wraper.simulate('blur')
+      const input = render(<Input />).container.querySelector('input')
+      fireEvent.blur(input)
     })
 
 
@@ -255,8 +243,8 @@ describe('when subcribe to an observable', () => {
 
       Button.onClick$.subscribe(() => done())
 
-      const wraper = mount(<Button />)
-      wraper.simulate('click')
+      const button = render(<Button />).container.querySelector('button')
+      fireEvent.click(button)
     })
 
   })
@@ -269,22 +257,22 @@ describe('when subcribe to an observable', () => {
 
       const HookTest = (props) => {
         const [value] = useRxInputValue(Input, 'initial')
-        const Helper = (props) => null
         return <>
           <Input />
-          <Helper value={value} />
+          <div data-testid="value">{value}</div>
         </>
       }
 
-      const wraper = mount(<HookTest />)
-      const getState = () => wraper.find('Helper').props()['value']
+      const { getByTestId, container } = render(<HookTest />)
 
-      expect(getState()).toBe('initial')
+      const getValue = () => getByTestId('value').textContent
 
-      wraper.find('input').simulate('change', { target: { value: typedText } })
-      wraper.update()
+      expect(getValue()).toBe('initial')
 
-      expect(getState()).toBe('hello')
+      const input = container.querySelector('input')
+      fireEvent.change(input, { target: { value: typedText } })
+
+      expect(getValue()).toBe('hello')
 
     })
 
