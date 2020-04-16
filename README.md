@@ -20,7 +20,7 @@ npm i reactivehooks
 
 The code below is a sample that shows how to write a type ahead search using Reactive Hooks and [RxJs](https://github.com/ReactiveX/rxjs):
 
-* for a more complete example check the [**sample folder**](https://github.com/lucasteles/reactivehooks/tree/master/Sample) source code in this repository or check this working [online sample](https://stackblitz.com/edit/rectivehooks-sample)
+* for a more complete example check the [**sample project**](https://github.com/lucasteles/reactivehookssample)  or check this working [online sample](https://stackblitz.com/edit/rectivehooks-sample)
 
 ```tsx
 // api fetch that returns an observable
