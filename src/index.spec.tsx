@@ -52,7 +52,6 @@ describe('when subcribe to an observable', () => {
       }
 
       render(<TestComponent />)
-
       expect(completesFn).toHaveBeenCalledWith(true)
     })
 
@@ -96,13 +95,13 @@ describe('when subcribe to an observable', () => {
   describe('using useObservable', () => {
 
     it('should create a state with start value', () => {
-      const observable: Observable<Number> = Observable.create()
+      const observable: Observable<number> = Observable.create()
       const value = getHookValue(() => useObservable(observable, 0))
       expect(value).toBe(0)
     })
 
     it('should update state when observable emit value', () => {
-      const observable: Observable<Number> = of(1)
+      const observable: Observable<number> = of(1)
       const value = getHookValue(() => useObservable(observable, 0))
 
       expect(value).toBe(1)
@@ -131,14 +130,14 @@ describe('when subcribe to an observable', () => {
   describe('using useObservableWithError', () => {
 
     it('should create a state with start value', () => {
-      const observable: Observable<Number> = Observable.create()
+      const observable: Observable<number> = Observable.create()
       const [value] = getHookValue(() => useObservableWithError(observable, 0))
 
       expect(value).toBe(0)
     })
 
     it('should update state when observable emit value', () => {
-      const observable: Observable<Number> = of(1)
+      const observable: Observable<number> = of(1)
       const [value] = getHookValue(() => useObservableWithError(observable, 0))
 
       expect(value).toBe(1)
@@ -163,28 +162,28 @@ describe('when subcribe to an observable', () => {
     })
 
     it('error should be undefined if there is no error', () => {
-      const observable: Observable<Number> = of(1)
+      const observable: Observable<number> = of(1)
       const [, error] = getHookValue(() => useObservableWithError(observable, 0))
 
       expect(error).toBeUndefined()
     })
 
     it('complete should be false if it not completed', () => {
-      const observable: Observable<Number> = Observable.create()
+      const observable: Observable<number> = Observable.create()
       const [, , completed] = getHookValue(() => useObservableWithError(observable, 0))
 
       expect(completed).toBe(false)
     })
 
     it('complete should be true if it is completed', () => {
-      const observable: Observable<Number> = of(1)
+      const observable: Observable<number> = of(1)
       const [, , completed] = getHookValue(() => useObservableWithError(observable, 0))
 
       expect(completed).toBe(true)
     })
 
     it('error should exist if there is an error', () => {
-      const observable: Observable<Number> = throwError('error')
+      const observable: Observable<number> = throwError('error')
       const [, error] = getHookValue(() => useObservableWithError(observable, 0))
 
       expect(error).toBe('error')
@@ -255,7 +254,7 @@ describe('when subcribe to an observable', () => {
       const Input = rxInput('text')
       const typedText = 'hello'
 
-      const HookTest = (props: unknown) => {
+      const HookTest = () => {
         const [value] = useRxInputValue(Input, 'initial')
         return <>
           <Input />

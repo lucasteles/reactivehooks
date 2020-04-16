@@ -31,15 +31,14 @@ function useSubscribe<T>(
   complete?: ((done: boolean) => void) | undefined): void {
 
   useEffect(() => {
-    const subscription = observable.subscribe(next, error, complete && (() => complete(true))) 
+    const subscription = observable.subscribe(next, error, complete && (() => complete(true)))
 
     return () => subscription.unsubscribe()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [observable])
 }
 
 function useObservable<T>(observable: Observable<T>, initialValue: T): T {
-  const [value, setValue] = useState(initialValue /*?*/)
+  const [value, setValue] = useState(initialValue)
   useSubscribe(observable, setValue)
   return value
 }
@@ -111,25 +110,26 @@ const createLoaderControl = () => {
   const subject = new BehaviorSubject(false)
   return {
     start() {
-      return <T extends Object>(x: Observable<T>) =>
-        x.pipe(
+      return function <T>(x: Observable<T>) {
+        return x.pipe(
           finalize(() => subject.next(false)),
           tap<T>(() => subject.next(true)),
         )
+      }
     },
     stop() {
-      return <T extends Object>(x: Observable<T>) =>
-        tap<T>(() => subject.next(false))(x)
+      return function <T>(x: Observable<T>) { return tap<T>(() => subject.next(false))(x) }
     },
     status$: subject.asObservable(),
   }
 }
 
-const fetchJson = <T extends Object>(url: string | Request, init?: RequestInit) =>
-  fromFetch(url, init)
+function fetchJson<T>(url: string | Request, init?: RequestInit) {
+  return fromFetch(url, init)
     .pipe(
       switchMap(x => x.json().then(x => x as T)),
     )
+}
 
 export {
   useObservable,
