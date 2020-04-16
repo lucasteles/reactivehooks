@@ -202,7 +202,7 @@ describe('when subcribe to an observable', () => {
         expect(e.target.value).toBe(typedText)
         done()
       })
-      const input = render(<Input />).container.querySelector('input')
+      const input = render(<Input />).container.querySelector('input') as Element
       fireEvent.change(input, { target: { value: typedText } })
     })
 
@@ -215,7 +215,7 @@ describe('when subcribe to an observable', () => {
         done()
       })
 
-      const input = render(<Input />).container.querySelector('input')
+      const input = render(<Input />).container.querySelector('input') as Element
       fireEvent.change(input, { target: { value: typedText } })
     })
 
@@ -224,7 +224,7 @@ describe('when subcribe to an observable', () => {
 
       Input.onFocus$.subscribe(() => done())
 
-      const input = render(<Input />).container.querySelector('input')
+      const input = render(<Input />).container.querySelector('input') as Element
       fireEvent.focus(input)
     })
 
@@ -233,7 +233,7 @@ describe('when subcribe to an observable', () => {
 
       Input.onBlur$.subscribe(() => done())
 
-      const input = render(<Input />).container.querySelector('input')
+      const input = render(<Input />).container.querySelector('input') as Element
       fireEvent.blur(input)
     })
 
@@ -243,7 +243,7 @@ describe('when subcribe to an observable', () => {
 
       Button.onClick$.subscribe(() => done())
 
-      const button = render(<Button />).container.querySelector('button')
+      const button = render(<Button />).container.querySelector('button') as Element
       fireEvent.click(button)
     })
 
@@ -255,7 +255,7 @@ describe('when subcribe to an observable', () => {
       const Input = rxInput('text')
       const typedText = 'hello'
 
-      const HookTest = (props) => {
+      const HookTest = (props: unknown) => {
         const [value] = useRxInputValue(Input, 'initial')
         return <>
           <Input />
@@ -269,7 +269,7 @@ describe('when subcribe to an observable', () => {
 
       expect(getValue()).toBe('initial')
 
-      const input = container.querySelector('input')
+      const input = container.querySelector('input') as Element
       fireEvent.change(input, { target: { value: typedText } })
 
       expect(getValue()).toBe('hello')
