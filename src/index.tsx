@@ -24,10 +24,10 @@ interface RxButtonProperties {
 type RxInput = React.FC<InputProps> & RxInputProperties
 type RxButton = React.FC<ButtonProps> & RxButtonProperties
 
-function useSubscribe<T>(
+function useSubscribe<T, TError>(
   observable: Observable<T>,
   next?: ((value: T) => void) | undefined,
-  error?: ((error: any) => void) | undefined,
+  error?: ((error: TError) => void) | undefined,
   complete?: ((done: boolean) => void) | undefined): void {
 
   useEffect(() => {
@@ -44,7 +44,7 @@ function useObservable<T>(observable: Observable<T>, initialValue: T): T {
 }
 
 
-function useObservableWithError<T>(observable: Observable<T>, initialValue: T): [T, any, boolean] {
+function useObservableWithError<T, TError>(observable: Observable<T>, initialValue: T): [T, TError | undefined, boolean] {
   const [value, setValue] = useState(initialValue)
   const [error, setError] = useState(undefined)
   const [completed, setComplete] = useState(false)

@@ -9,12 +9,12 @@ module.exports = {
         "plugin:@typescript-eslint/recommended" // Uses the recommended rules from @typescript-eslint/eslint-plugin
     ],
     "parserOptions": {
-        "project": "tsconfig.json",
+        "project": "tsconfig.eslint.json",
         "sourceType": "module",
         "parserOptions": {
             "ecmaFeatures": {
-                jsx: true, 
-                tsx: true 
+                jsx: true,
+                tsx: true
             }
         },
     },
@@ -40,6 +40,13 @@ module.exports = {
             "never"
         ],
         "@typescript-eslint/explicit-function-return-type": "off"
-
-    }
+    },
+    "overrides": [
+        {
+            "files": ["**/*.spec.*"],
+            "rules": {
+              "@typescript-eslint/no-explicit-any": "off"
+            }
+        }
+    ]
 }
