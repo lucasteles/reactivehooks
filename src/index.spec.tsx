@@ -1,9 +1,8 @@
 import React from 'react'
-import { act } from 'react-dom/test-utils'
 import { of, throwError, Observable, EMPTY, Subject } from 'rxjs'
 import { useSubscribe, useObservable, useObservableWithError, rxInput, rxButton, useRxInputValue } from './'
 import { render, fireEvent } from '@testing-library/react'
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook, act } from '@testing-library/react-hooks'
 
 describe('when subcribe to an observable', () => {
 
