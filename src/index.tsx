@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Observable, Subject, BehaviorSubject } from 'rxjs'
+import { Observable, Subject, BehaviorSubject, defer } from 'rxjs'
 import { tap, finalize, map, switchMap } from 'rxjs/operators'
 import { fromFetch } from 'rxjs/fetch'
 
@@ -127,9 +127,30 @@ const createLoaderControl = () => {
 function fetchJson<T>(url: string | Request, init?: RequestInit) {
   return fromFetch(url, init)
     .pipe(
-      switchMap(x => x.json().then(x => x as T)),
+      switchMap(x => x.json().then((x: T) => x)),
     )
 }
+
+const waitElementPromise = (id: string, timeout = 1000) =>
+  new Promise<HTMLElement>((resolve, reject) => {
+    let time = 0
+    const interval = 100
+    const inteval = setInterval(() => {
+      const domElement = document.getElementById(id)
+      if (domElement != null) {
+        clearInterval(inteval)
+        resolve(domElement)
+      }
+      else {
+        time += interval
+        if (time >= timeout)
+          reject(new Error('waitElement timeout'))
+      }
+    }, interval)
+  })
+
+const waitElement = (id: string, timeout = 1000) => defer(() => waitElementPromise(id, timeout))
+
 
 export {
   useObservable,
@@ -140,4 +161,5 @@ export {
   rxButton,
   createLoaderControl,
   fetchJson,
+  waitElement,
 }

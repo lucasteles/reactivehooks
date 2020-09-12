@@ -1,6 +1,6 @@
 import React from 'react'
 import { of, throwError, Observable, EMPTY, Subject } from 'rxjs'
-import { useSubscribe, useObservable, useObservableWithError, rxInput, rxButton, useRxInputValue } from './'
+import { useSubscribe, useObservable, useObservableWithError, rxInput, rxButton, useRxInputValue, waitElement } from './'
 import { render, fireEvent } from '@testing-library/react'
 import { renderHook, act } from '@testing-library/react-hooks'
 
@@ -276,4 +276,39 @@ describe('when subcribe to an observable', () => {
 
   })
 
+  describe('with waitElement', () => {
+    beforeEach(() => {
+      document.body.innerHTML = ''
+    })
+    it("should find element", done => {
+      document.body.innerHTML = `
+          <div id="theId">Foo</div>
+      `
+      waitElement('theId')
+        .subscribe(item => {
+          expect(item).toBeTruthy()
+          done()
+        })
+    })
+
+    it("should find delayed element", done => {
+      setTimeout(() => {
+        document.body.innerHTML = `
+          <div id="theId">Foo</div>`
+      }, 1000)
+
+      waitElement('theId', 1000)
+        .subscribe(item => {
+          expect(item).toBeTruthy()
+          done()
+        })
+    })
+
+    it("should throw if element is not found", done => {
+      waitElement('notExistingId', 100)
+        .subscribe(() => { fail() }, () => done())
+    })
+  })
+
 })
+
