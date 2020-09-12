@@ -29,4 +29,5 @@ declare const createLoaderControl: () => {
     status$: Observable<boolean>;
 };
 declare function fetchJson<T>(url: string | Request, init?: RequestInit): Observable<T>;
-export { useObservable, useObservableWithError, useSubscribe, useRxInputValue, rxInput, rxButton, createLoaderControl, fetchJson, };
+declare const waitElement: (id: string, timeout?: number) => Observable<HTMLElement>;
+export { useObservable, useObservableWithError, useSubscribe, useRxInputValue, rxInput, rxButton, createLoaderControl, fetchJson, waitElement, };
