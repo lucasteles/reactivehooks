@@ -44,7 +44,7 @@
         "@types/testing-library__react-hooks": "^3.2.0",
         "@typescript-eslint/eslint-plugin": "^2.28.0",
         "@typescript-eslint/parser": "^2.28.0",
-        "axios": "^0.19.0",
+        "axios": "^0.21.1",
         "axios-observable": "^1.1.2",
         "coveralls": "^3.0.11",
         "enzyme-adapter-react-16": "^1.14.0",
