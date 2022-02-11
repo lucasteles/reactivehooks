@@ -51,7 +51,7 @@
         "eslint": "^6.8.0",
         "eslint-plugin-react": "^7.19.0",
         "jest": "^25.3.0",
-        "node-sass": "^4.13.1",
+        "node-sass": "^7.0.0",
         "react-dom": "^16.8.6",
         "react-scripts": "3.0.1",
         "ts-jest": "^25.3.1"
