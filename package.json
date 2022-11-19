@@ -53,7 +53,7 @@
         "jest": "^25.3.0",
         "node-sass": "^4.13.1",
         "react-dom": "^16.8.6",
-        "react-scripts": "3.0.1",
+        "react-scripts": "5.0.1",
         "ts-jest": "^25.3.1"
     }
 }
